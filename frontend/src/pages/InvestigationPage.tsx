@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { API_BASE } from '../config'
 
 // ====================================================================
 // TATVA | Investigation Analysis Console
@@ -61,7 +62,7 @@ export default function InvestigationPage() {
   const [riskProfiles, setRiskProfiles] = useState<any[]>([])
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/insights/risk-profiles')
+    fetch(`${API_BASE}/api/insights/risk-profiles`)
       .then(res => res.json())
       .then(data => setRiskProfiles(data))
       .catch(err => console.error('Failed to load risk profiles:', err))
@@ -85,7 +86,7 @@ export default function InvestigationPage() {
     setRelationDetails(null)
     
     try {
-      const res = await fetch(`http://localhost:8000/api/insights/relation-details?source=${srcId}&target=${tgtId}`)
+      const res = await fetch(`${API_BASE}/api/insights/relation-details?source=${srcId}&target=${tgtId}`)
       if (res.ok) {
         const data = await res.json()
         setRelationDetails(data)
@@ -98,7 +99,7 @@ export default function InvestigationPage() {
   }
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/insights/suspects')
+    fetch(`${API_BASE}/api/insights/suspects`)
       .then(res => res.json())
       .then(data => setSuspects(data))
       .catch(err => console.error('Failed to fetch suspects', err))
@@ -106,7 +107,7 @@ export default function InvestigationPage() {
 
   // Fetch assessments on mount
   useEffect(() => {
-    fetch(`http://localhost:8000/api/entity-assessments/${ACTIVE_CASE_ID}`)
+    fetch(`${API_BASE}/api/entity-assessments/${ACTIVE_CASE_ID}`)
       .then(res => res.json())
       .then((data: AssessmentsMap) => setAssessments(data))
       .catch(err => console.error('Failed to fetch assessments', err))
@@ -125,7 +126,7 @@ export default function InvestigationPage() {
   const saveAssessment = async (entityId: string, status: EntityStatus, reason?: string) => {
     setSavingAssessment(true)
     try {
-      await fetch('http://localhost:8000/api/entity-assessments', {
+      await fetch(`${API_BASE}/api/entity-assessments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ case_id: ACTIVE_CASE_ID, entity_id: entityId, status, reason: reason || null }),
@@ -142,7 +143,7 @@ export default function InvestigationPage() {
   useEffect(() => {
     setGraphLoading(true)
     setGraphError(null)
-    fetch('http://localhost:8000/graph/render')
+    fetch(`${API_BASE}/graph/render`)
       .then(res => {
         if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`)
         return res.json()
@@ -601,7 +602,7 @@ export default function InvestigationPage() {
           <div className="p-6 border-t border-[#3f4852]/30 space-y-3 flex-shrink-0">
             <button
               onClick={() => {
-                window.open(`http://localhost:8000/api/cases/${ACTIVE_CASE_ID}/export-pdf`, '_blank');
+                window.open(`${API_BASE}/api/cases/${ACTIVE_CASE_ID}/export-pdf`, '_blank');
               }}
               className="w-full py-4 rounded-lg flex items-center justify-center gap-2 hover:brightness-110 active:scale-[0.98] transition-all"
               style={{ background: '#feb700', color: '#412d00', fontFamily: 'Geist', fontSize: '24px', fontWeight: '600', boxShadow: 'inset 0 0 10px rgba(152,203,255,0.1)' }}
@@ -630,7 +631,7 @@ function TimelineTab({ selectedEntityId }: { selectedEntityId?: string }) {
   useEffect(() => {
     setLoading(true);
     setError(null);
-    fetch('http://localhost:8000/api/timeline')
+    fetch(`${API_BASE}/api/timeline`)
       .then(res => {
         if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
         return res.json();

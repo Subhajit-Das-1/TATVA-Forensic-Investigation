@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLogSimulator } from '../hooks/useLogSimulator'
+import { API_BASE } from '../config'
 
 // ====================================================================
 // TATVA | Active Intelligence Reconstruction
@@ -16,7 +17,7 @@ export default function ReconstructionPage() {
   useLogSimulator('logs-feed', 3000)
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/insights/summary')
+    fetch(`${API_BASE}/api/insights/summary`)
       .then(res => res.json())
       .then(data => setSummary(data))
       .catch(err => console.error('Failed to fetch summary', err))

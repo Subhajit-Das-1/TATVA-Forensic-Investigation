@@ -1,0 +1,47 @@
+services:
+  # 1. FastAPI Backend (Docker-based Web Service)
+  - type: web
+    name: tatva-backend
+    runtime: docker
+    dockerfilePath: backend/Dockerfile
+    dockerContext: backend
+    plan: free
+    # Health check path to verify FastAPI startup
+    healthCheckPath: /docs
+    envVars:
+      - key: NEO4J_URI
+        sync: false
+      - key: NEO4J_USER
+        sync: false
+      - key: NEO4J_PASSWORD
+        sync: false
+      - key: SUPABASE_DB_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+    # Persistent disk for storing uploaded case files
+    disk:
+      name: tatva-uploads
+      mountPath: /app/uploads
+      sizeGB: 1
+
+  # 2. React Frontend (Static Site)
+  - type: web
+    name: tatva-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    routes:
+      # Redirect all routes to index.html for react-router-dom
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      # Crucial: This must be the PUBLIC HTTPS URL of your deployed backend.
+      # Render will generate this URL after creating the tatva-backend service above.
+      # You can replace this value in the Render dashboard once the backend URL is known.
+      - key: VITE_API_BASE_URL
+        value: https://tatva-backend.onrender.com

@@ -2,15 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import type { DragEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type { CaseListItem, EvidenceUploadItem, CognitiveConfig } from '../types/case'
-
-// ====================================================================
-// TATVA | Case File Initialization
-// Stitch screen: e51101a195104961b26a638bab7f14a8
-// Layout: Fixed TopNav + Fixed SideNav + Scrollable main
-// Colors: Blue primary (#98cbff), Amber accent (#feb700)
-// ====================================================================
-
-const API_BASE = 'http://localhost:8000'
+import { API_BASE } from '../config'
 const ALLOWED_EXTENSIONS = new Set(['csv', 'json', 'txt', 'pdf', 'wav', 'jpg', 'jpeg', 'png', 'log'])
 
 function slugify(str: string): string {
